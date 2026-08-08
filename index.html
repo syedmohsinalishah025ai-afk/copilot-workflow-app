@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Copilot - Generate</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-secondary": "#ffffff",
+                "tertiary": "#5c00ca",
+                "error": "#ba1a1a",
+                "on-background": "#191c1d",
+                "surface-bright": "#f8f9fa",
+                "on-tertiary-fixed-variant": "#5a00c6",
+                "outline": "#777587",
+                "inverse-primary": "#c3c0ff",
+                "on-secondary-fixed": "#121c2a",
+                "on-secondary-container": "#596373",
+                "on-error": "#ffffff",
+                "on-primary-container": "#dad7ff",
+                "on-surface-variant": "#464555",
+                "secondary-container": "#d6e0f3",
+                "tertiary-container": "#7531e6",
+                "on-tertiary": "#ffffff",
+                "on-primary-fixed": "#0f0069",
+                "secondary-fixed-dim": "#bdc7d9",
+                "on-tertiary-container": "#e4d4ff",
+                "surface-container-low": "#f3f4f5",
+                "on-tertiary-fixed": "#25005a",
+                "on-secondary-fixed-variant": "#3d4756",
+                "tertiary-fixed-dim": "#d2bbff",
+                "primary-fixed-dim": "#c3c0ff",
+                "secondary-fixed": "#d9e3f6",
+                "primary-fixed": "#e2dfff",
+                "on-error-container": "#93000a",
+                "surface-container-lowest": "#ffffff",
+                "surface-tint": "#4d44e3",
+                "on-surface": "#191c1d",
+                "error-container": "#ffdad6",
+                "tertiary-fixed": "#eaddff",
+                "on-primary": "#ffffff",
+                "surface-container-highest": "#e1e3e4",
+                "inverse-on-surface": "#f0f1f2",
+                "surface-container": "#edeeef",
+                "primary": "#3525cd",
+                "surface": "#f8f9fa",
+                "primary-container": "#4f46e5",
+                "outline-variant": "#c7c4d8",
+                "inverse-surface": "#2e3132",
+                "surface-dim": "#d9dadb",
+                "surface-container-high": "#e7e8e9",
+                "on-primary-fixed-variant": "#3323cc",
+                "secondary": "#555f6f",
+                "surface-variant": "#e1e3e4",
+                "background": "#f8f9fa"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "lg": "24px",
+                "xl": "32px",
+                "margin-desktop": "40px",
+                "md": "16px",
+                "sm": "8px",
+                "3xl": "64px",
+                "gutter": "24px",
+                "unit": "4px",
+                "margin-mobile": "16px",
+                "2xl": "48px",
+                "xs": "4px"
+        },
+        "fontFamily": {
+                "headline-lg-mobile": ["Inter"],
+                "label-sm": ["Inter"],
+                "mono-code": ["Inter"],
+                "headline-xl": ["Inter"],
+                "label-md": ["Inter"],
+                "body-sm": ["Inter"],
+                "headline-md": ["Inter"],
+                "headline-lg": ["Inter"],
+                "body-md": ["Inter"],
+                "body-lg": ["Inter"]
+        },
+        "fontSize": {
+                "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                "mono-code": ["14px", {"lineHeight": "22px", "fontWeight": "400"}],
+                "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "label-md": ["14px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+        }
+},
+    },
+  }
+</script>
+<style>
+    .toggle-active {
+        background: linear-gradient(to right, #3b82f6, #60a5fa) !important;
+        color: #ffffff !important;
+        border-color: transparent !important;
+    }
+    .spinner {
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top: 2px solid #fff;
+        width: 16px;
+        height: 16px;
+        animation: spin 1s linear infinite;
+        display: none;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .loading .spinner { display: inline-block; }
+    .loading .btn-text { opacity: 0.7; }
+    body { min-height: max(884px, 100dvh); }
+    #resultContent h1, #resultContent h2, #resultContent h3 { font-weight: 700; margin: 12px 0 6px; }
+    #resultContent h1 { font-size: 20px; } #resultContent h2 { font-size: 18px; } #resultContent h3 { font-size: 16px; }
+    #resultContent ul, #resultContent ol { margin: 8px 0; padding-left: 24px; }
+    #resultContent li { margin-bottom: 4px; }
+    #resultContent strong { font-weight: 700; }
+    #resultContent hr { border: none; border-top: 1px solid #c7c4d8; margin: 12px 0; }
+    #resultContent p { margin-bottom: 8px; }
+</style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen">
+<header class="bg-surface-container-lowest w-full sticky top-0 border-b border-outline-variant z-50">
+<div class="max-w-[700px] mx-auto px-gutter flex justify-between items-center h-16">
+<button class="text-on-surface hover:bg-surface-container-low transition-colors active:opacity-80 p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-lg text-headline-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-blue-400">Copilot</h1>
+<div class="flex items-center gap-2">
+<button class="text-on-surface hover:bg-surface-container-low transition-colors active:opacity-80 p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">person</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-[700px] mx-auto px-gutter py-xl">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-gutter mb-xl">
+<form class="flex flex-col gap-md" id="generateForm">
+<div class="flex flex-col gap-sm">
+<label class="font-label-md text-label-md text-on-surface" for="businessDesc">Tell me about your business</label>
+<textarea class="w-full border border-outline-variant rounded-lg p-3 font-body-md text-on-surface bg-surface-container-lowest focus:border-primary focus:ring-0 focus:outline-none resize-y transition-colors" id="businessDesc" placeholder="e.g. We are a B2B SaaS company that helps plumbers schedule appointments..." rows="4"></textarea>
+<span class="font-label-md text-label-md text-error hidden" id="descError">Please enter a description.</span>
+</div>
+<div class="flex flex-col gap-sm">
+<span class="font-label-md text-label-md text-on-surface">Output Type</span>
+<div class="flex flex-row border border-outline-variant rounded-lg overflow-hidden" id="taskTypeGroup">
+<button class="toggle-btn flex-1 py-2 px-4 font-label-md text-label-md text-on-surface border-r border-outline-variant hover:bg-surface-container-low transition-colors toggle-active" data-value="task_plan" type="button">Task Plan</button>
+<button class="toggle-btn flex-1 py-2 px-4 font-label-md text-label-md text-on-surface border-r border-outline-variant hover:bg-surface-container-low transition-colors" data-value="email" type="button">Follow-up Email</button>
+<button class="toggle-btn flex-1 py-2 px-4 font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors" data-value="report" type="button">Weekly Report</button>
+</div>
+<input id="selectedTaskType" type="hidden" value="task_plan"/>
+</div>
+<div class="pt-sm">
+<button class="w-full bg-gradient-to-r from-blue-500 to-blue-400 text-white py-3 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 hover:opacity-90 transition-colors active:opacity-80" id="submitBtn" type="submit">
+<span class="spinner"></span>
+<span class="btn-text">Generate</span>
+</button>
+</div>
+<div class="font-body-md text-error bg-error-container p-3 rounded-lg hidden text-center" id="apiError">
+                Something went wrong. Please try again.
+            </div>
+</form>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-gutter mb-xl hidden opacity-0 transition-opacity duration-300" id="resultCard">
+<div class="flex justify-between items-center mb-md pb-sm border-b border-outline-variant">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Result</h2>
+<span class="font-label-md text-label-md text-on-surface-variant" id="resultTime">Just now</span>
+</div>
+<div class="font-body-md text-on-surface whitespace-pre-wrap" id="resultContent"></div>
+</div>
+<div class="flex flex-col gap-md mt-xl">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Recent Generations</h2>
+<div class="flex flex-col gap-md" id="historyList">
+<div class="p-gutter text-center text-on-surface-variant" id="historyLoading">
+                Loading history...
+            </div>
+</div>
+</div>
+</main>
+<script>
+    const API_BASE = "http://localhost:8001/api";
+
+    function labelFor(type) {
+        return { task_plan: "Task Plan", email: "Follow-up Email", report: "Weekly Report" }[type] || type;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const toggleBtns = document.querySelectorAll('.toggle-btn');
+        const hiddenInput = document.getElementById('selectedTaskType');
+
+        toggleBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                toggleBtns.forEach(b => {
+                    b.classList.remove('toggle-active');
+                    b.classList.add('text-on-surface');
+                });
+                const target = e.currentTarget;
+                target.classList.add('toggle-active');
+                target.classList.remove('text-on-surface');
+                hiddenInput.value = target.getAttribute('data-value');
+            });
+        });
+
+        const form = document.getElementById('generateForm');
+        const textarea = document.getElementById('businessDesc');
+        const descError = document.getElementById('descError');
+        const submitBtn = document.getElementById('submitBtn');
+        const apiError = document.getElementById('apiError');
+        const resultCard = document.getElementById('resultCard');
+        const resultContent = document.getElementById('resultContent');
+        const resultTime = document.getElementById('resultTime');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            descError.classList.add('hidden');
+            apiError.classList.add('hidden');
+            textarea.classList.remove('border-error');
+
+            const descValue = textarea.value.trim();
+            const taskType = hiddenInput.value;
+
+            if (!descValue) {
+                descError.classList.remove('hidden');
+                textarea.classList.add('border-error');
+                return;
+            }
+
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ business_desc: descValue, task_type: taskType })
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.detail || 'API Error');
+                }
+                const data = await response.json();
+
+                resultContent.innerHTML = marked.parse(data.result);
+                const now = new Date(data.created_at || Date.now());
+                resultTime.textContent = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                resultCard.classList.remove('hidden');
+                setTimeout(() => { resultCard.classList.remove('opacity-0'); }, 50);
+
+                loadHistory();
+
+            } catch (err) {
+                apiError.textContent = err.message || 'Something went wrong. Please try again.';
+                apiError.classList.remove('hidden');
+            } finally {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+            }
+        });
+
+        const historyList = document.getElementById('historyList');
+        const historyLoading = document.getElementById('historyLoading');
+
+        async function loadHistory() {
+            try {
+                const response = await fetch(`${API_BASE}/history`);
+                if (!response.ok) throw new Error('API Error');
+                const data = await response.json();
+                const items = data.items || [];
+
+                historyLoading.style.display = 'none';
+                historyList.querySelectorAll('.history-item').forEach(el => el.remove());
+
+                if (items.length === 0) {
+                    historyList.innerHTML += '<div class="p-gutter text-center text-on-surface-variant history-item">No recent generations.</div>';
+                    return;
+                }
+
+                items.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'history-item bg-surface-container-lowest border border-outline-variant rounded-xl p-4 hover:bg-surface-container-low transition-colors cursor-pointer';
+                    const time = new Date(item.created_at).toLocaleString();
+                    const snippet = (item.result || '').slice(0, 80);
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-label-md text-label-md text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-400 uppercase tracking-wider">${labelFor(item.task_type)}</span>
+                            <span class="font-label-md text-label-md text-on-surface-variant">${time}</span>
+                        </div>
+                        <p class="font-body-md text-on-surface truncate">${snippet}</p>
+                    `;
+                    historyList.appendChild(card);
+                });
+
+            } catch (err) {
+                historyLoading.textContent = 'Failed to load history — is the backend running?';
+                historyLoading.style.display = 'block';
+            }
+        }
+
+        loadHistory();
+    });
+</script>
+</body></html>
